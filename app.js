@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -128,6 +129,11 @@ app.post('/webhook-mp', async (req, res) => {
     }
 });
 
+app.get(/.*/, (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+});
+
 app.listen(port, () => {
-    console.log(`Vitrina Clonada LUXNOVA SHOP corriendo en puerto ${port}`);
+    console.log(`✅ Vitrina Clonada LUXNOVA SHOP encendida`);
+    console.log(`👉 Haz clic aquí para verla: http://localhost:${port}`);
 });
