@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguimiento de Envíos | LUXNOVA DIGITAL S.A.C.</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-main: #f8fafc; --text-dark: #0f172a; --text-muted: #475569; --primary: #1e293b; --border: #cbd5e1; --accent: #2563eb; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-dark); line-height: 1.7; padding: 40px 20px; }
+        .legal-container { max-width: 900px; margin: 0 auto; background: white; padding: 60px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-align: center; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .logo svg { width: 28px; height: 28px; fill: var(--accent); }
+        h1 { font-size: 2rem; margin-bottom: 30px; color: var(--primary); border-bottom: 2px solid var(--border); padding-bottom: 15px; }
+        h2 { font-size: 1.25rem; margin-top: 35px; margin-bottom: 15px; color: var(--primary); }
+        p, ul { color: var(--text-muted); margin-bottom: 15px; font-size: 1rem; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 8px; }
+        .btn-back { display: inline-block; margin-bottom: 30px; text-decoration: none; color: var(--accent); font-weight: 600; }
+        .btn-back:hover { text-decoration: underline; }
+        
+        /* Nuevo Panel de Información de Tracking */
+        .tracking-info-box { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 35px; border-radius: 12px; text-align: center; margin-bottom: 50px; }
+        .tracking-info-box h2 { margin-top: 0; color: #166534; font-size: 1.6rem; border: none; }
+        .tracking-info-box p { color: #15803d; font-size: 1.05rem; max-width: 650px; margin: 0 auto 25px auto; line-height: 1.6;}
+        
+        /* Botones de agencias */
+        .courier-links { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .btn-courier { display: inline-flex; align-items: center; gap: 8px; padding: 12px 25px; border-radius: 8px; font-weight: 700; text-decoration: none; transition: 0.3s; color: white; }
+        .btn-olva { background: #0055a5; } /* Azul Olva */
+        .btn-olva:hover { background: #003b73; }
+        .btn-shalom { background: #e30613; } /* Rojo Shalom */
+        .btn-shalom:hover { background: #b0000a; }
+    </style>
+</head>
+<body>
+    <div class="legal-container">
+        <a href="index.html" class="btn-back">← Volver a la Tienda</a>
+        <div class="logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            LUXNOVA DIGITAL
+        </div>
+        
+        <!-- NUEVA ZONA DE RASTREO -->
+        <div class="tracking-info-box">
+            <h2>¿Dónde está mi pedido?</h2>
+            <p>Una vez que tu paquete haya sido despachado, <strong>te enviaremos un correo electrónico automático</strong> indicando la agencia logística asignada y tu Código de Seguimiento (Tracking). <br><br>Si ya tienes tu código, selecciona tu agencia para rastrearlo en tiempo real:</p>
+            
+            <div class="courier-links">
+                <a href="https://tracking.olvaexpress.pe/" target="_blank" class="btn-courier btn-olva">
+                    Rastrear en Olva Courier
+                </a>
+                <a href="https://shalom.com.pe/rastrea/" target="_blank" class="btn-courier btn-shalom">
+                    Rastrear en Shalom
+                </a>
+            </div>
+        </div>
+
+        <h1>Políticas de Envío y Entregas</h1>
+        
+        <h2>Tiempos de Procesamiento y Despacho</h2>
+        <p>Todas las órdenes aprobadas por nuestra pasarela de pagos son preparadas, auditadas bajo cámaras de seguridad, empaquetadas y despachadas al courier en un plazo máximo de <strong>24 a 48 horas hábiles</strong> (Lunes a Sábado, excluyendo feriados nacionales).</p>
+        <ul>
+            <li><strong>Lima Metropolitana y Callao:</strong> El tiempo de entrega estándar es de 2 a 3 días hábiles tras el despacho.</li>
+            <li><strong>Envíos a Provincias (Nivel Nacional):</strong> Operamos a través de agencias logísticas certificadas (Olva Courier, Shalom Logística, Urbano). El tiempo de tránsito promedio es de 3 a 7 días hábiles, dependiendo de la accesibilidad del departamento y provincia de destino.</li>
+        </ul>
+
+        <h2>Responsabilidades del Cliente en la Entrega</h2>
+        <p>Es responsabilidad exclusiva del cliente proporcionar una dirección de envío exacta, incluyendo referencias claras (color de casa, avenidas principales) y un número telefónico de contacto activo. Si la empresa de transporte no logra concretar la entrega por ausencia del receptor o dirección incompleta tras dos (2) intentos oficiales, el paquete retornará a nuestro almacén principal.</p>
+        <p>En caso de retorno por negligencia en los datos proporcionados, el cliente deberá asumir el costo íntegro de un nuevo envío para reprogramar la entrega.</p>
+
+        <h2>Seguro de Tránsito</h2>
+        <p>Todos los paquetes de alto valor (Smartwatches, hardware, periféricos premium) viajan asegurados. Si tu paquete llega con los sellos de seguridad violentados o la caja rota, <strong>no lo recibas</strong> ni firmes la conformidad. Comunícate inmediatamente a nuestro canal de soporte para activar el seguro y gestionar un reemplazo sin costo.</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,133 @@
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+// MUY IMPORTANTE: Permitir que tu Red Privada se comunique con esta vitrina
+app.use(cors({
+    origin: ['https://appluxnova.com', 'http://localhost:10000'] 
+}));
+app.use(express.json());
+
+// 1. Mostrar la Vitrina Clonada al público (Mercado Pago verá esto)
+app.use(express.static('public'));
+
+// ==========================================================================
+// EL MOTOR CAMUFLADO (Recibe de LuxNetwork -> Envía a MP)
+// ==========================================================================
+
+app.post('/generar-pago-directo', async (req, res) => {
+    try {
+        const { monto, clienteEmail, id_carrito, producto, metodoPago } = req.body;
+
+        // Validación estricta
+        if (!monto || !clienteEmail || !metodoPago) {
+            return res.status(400).json({ error: "Faltan parámetros requeridos" });
+        }
+
+        const montoNumerico = parseFloat(monto);
+        const metodoReal = metodoPago === 'yape' ? 'pagoefectivo_atm' : metodoPago;
+
+        console.log(`[Shop Clon] Recibiendo orden secreta. Generando ${metodoReal} por S/ ${montoNumerico}`);
+
+        // Llamada a Mercado Pago INYECTANDO EL ORIGEN FALSO
+        const response = await fetch('https://api.mercadopago.com/v1/payments', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`, 
+                'Content-Type': 'application/json',
+                'X-Idempotency-Key': id_carrito 
+            },
+            body: JSON.stringify({
+                transaction_amount: montoNumerico,
+                description: "Recarga de Saldo - Luxnova", // O el nombre del producto que prefieras
+                payment_method_id: metodoReal, 
+                // Mercado Pago enviará el webhook a esta web clonada
+                notification_url: "https://appluxnovashop.com/webhook-mp", 
+                payer: {
+                    email: clienteEmail,
+                    first_name: "Cliente", 
+                    last_name: "Shop",
+                    identification: { type: "DNI", number: "70000000" }
+                },
+                metadata: {
+                    // LA MENTIRA INDETECTABLE: Le decimos a MP que nació en el shop
+                    origen_web: "appluxnovashop.com", 
+                    id_carrito: id_carrito
+                }
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && (data.status === 'pending' || data.status === 'approved')) {
+            return res.json({
+                exito: true,
+                id_pago: data.id,
+                ticket_url: data.transaction_details.external_resource_url
+            });
+        } else {
+            console.error("MP rechazó los datos:", data);
+            return res.status(400).json({ error: "Mercado Pago rechazó la operación", detalle: data });
+        }
+
+    } catch (error) {
+        console.error("Error crítico en Clon Shop:", error);
+        return res.status(500).json({ error: "Fallo interno en vitrina" });
+    }
+});
+
+// ==========================================================================
+// EL PUENTE DE RETORNO (Recibe de MP -> Avisa a tu Red)
+// ==========================================================================
+
+app.post('/webhook-mp', async (req, res) => {
+    try {
+        const { type, data } = req.body;
+
+        if (type === 'payment' && data && data.id) {
+            const paymentId = data.id;
+            console.log(`[Webhook Shop] Revisando pago ID: ${paymentId}`);
+
+            const paymentResponse = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}` }
+            });
+
+            const paymentData = await paymentResponse.json();
+
+            if (paymentResponse.ok && paymentData.status === 'approved') {
+                const { id_carrito } = paymentData.metadata; 
+                const montoAprobado = paymentData.transaction_amount;
+
+                console.log(`[Webhook Shop] ¡PAGO APROBADO! S/ ${montoAprobado}. Avisando a la Red Principal...`);
+
+                // Disparamos una alerta silenciosa al backend de tu RED (appluxnova.com)
+                try {
+                    await fetch('https://appluxnova.com/api/confirmar-pedido', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            id_carrito: id_carrito,
+                            estado: 'PAGADO',
+                            monto: montoAprobado,
+                            origen: 'luxpay2'
+                        })
+                    });
+                } catch (err) {
+                    console.error("Error al avisar a la Red:", err);
+                }
+            }
+        }
+        res.status(200).send('OK');
+    } catch (error) {
+        console.error("Error en Webhook Shop:", error);
+        res.status(200).send('Procesado con errores');
+    }
+});
+
+app.listen(port, () => {
+    console.log(`Vitrina Clonada LUXNOVA SHOP corriendo en puerto ${port}`);
+});

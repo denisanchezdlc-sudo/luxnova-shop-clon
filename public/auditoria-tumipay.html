@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Auditoría Interna - LUXNOVA S.A.C.</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; padding: 40px; display: flex; justify-content: center; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); width: 100%; max-width: 600px; }
+        h1 { font-size: 1.5rem; color: #0f172a; margin-bottom: 5px; text-align: center; }
+        p.subtitle { color: #64748b; text-align: center; margin-bottom: 30px; font-size: 0.9rem; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
+        button { padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 0.95rem; transition: 0.2s; }
+        .btn-payin { background-color: #0ea5e9; color: white; }
+        .btn-payin:hover { background-color: #0284c7; }
+        .btn-payout { background-color: #8b5cf6; color: white; }
+        .btn-payout:hover { background-color: #7c3aed; }
+        .btn-error { background-color: #ef4444; color: white; border: 1px dashed white; }
+        .btn-error:hover { background-color: #dc2626; }
+        .console-box { background: #0f172a; color: #10b981; padding: 20px; border-radius: 8px; font-family: monospace; font-size: 0.85rem; min-height: 150px; overflow-wrap: break-word; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Centro de Pruebas API - TumiPay</h1>
+        <p class="subtitle">Entorno de Staging - LUXNOVA DIGITAL S.A.C.</p>
+
+        <!-- Bloque de Recaudos (PayIn) -->
+        <div class="btn-group">
+            <button class="btn-payin" onclick="simularPeticion('/api/tumipay/generar-payin', 150, 'approved@tumipay.co')">💳 1. Simular Venta (PayIn APROBADO)</button>
+            <button class="btn-error" onclick="simularPeticion('/api/tumipay/generar-payin', 150, 'rechazado@tumipay.co')">❌ 2. Simular Venta (PayIn RECHAZADO)</button>
+        </div>
+
+        <!-- Bloque de Dispersiones (PayOut) -->
+        <div class="btn-group">
+            <button class="btn-payout" onclick="simularPeticion('/api/tumipay/generar-payout', 150, 'approved@tumipay.co')">🔄 3. Simular Reembolso (PayOut APROBADO)</button>
+            <button class="btn-error" onclick="simularPeticion('/api/tumipay/generar-payout', 150, 'rechazado@tumipay.co')">🚫 4. Simular Reembolso (PayOut RECHAZADO)</button>
+        </div>
+
+        <div class="console-box" id="consola">
+            > Esperando acción...
+        </div>
+    </div>
+
+    <script>
+        function log(mensaje) { document.getElementById('consola').innerHTML = `> ${mensaje}`; }
+
+        // Ahora la función acepta el correo como parámetro oculto
+        async function simularPeticion(ruta, montoSimulado, emailSimulado) {
+            log(`Conectando con servidor (${ruta})<br>> Monto: S/ ${montoSimulado} | Email de prueba: ${emailSimulado}...`);
+            try {
+                const response = await fetch(ruta, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        monto: montoSimulado,
+                        clienteEmail: emailSimulado, // Aquí inyectamos la "palabra mágica"
+                        nombreCompleto: "Cliente Auditoría",
+                        dni: "70000000",
+                        banco: "BCP",
+                        numeroCuenta: "19100000000000",
+                        cci: "00219100000000000000"
+                    })
+                });
+                const data = await response.json();
+                log(JSON.stringify(data, null, 2));
+            } catch (error) {
+                log("Error de conexión: " + error);
+            }
+        }
+    </script>
+</body>
+</html>
