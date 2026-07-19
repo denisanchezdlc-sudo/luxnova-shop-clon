@@ -1503,7 +1503,7 @@
 
                 // 5. Llamamos a nuestro PROPIO backend (app.js) para que gestione Mercado Pago
                 // Usamos la ruta relativa '/procesar-pago' porque el frontend y el backend están en el mismo Render
-                const respuestaMP = await fetch('/procesar-pago', {
+                const respuestaMP = await fetch('/generar-pago-directo', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
