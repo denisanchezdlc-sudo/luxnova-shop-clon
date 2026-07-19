@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -23,7 +24,20 @@ app.post('/generar-pago-directo', async (req, res) => {
     try {
         const { monto, clienteEmail, id_carrito, producto, metodoPago } = req.body;
 
-        // Validación estricta
+        // 1. Extraemos y desciframos el Token de la Red (Lux2)
+        const authHeader = req.headers['authorization'];
+        let idDelComprador = "ANONIMO";
+        
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            const token = authHeader.split(' ')[1];
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                idDelComprador = decoded.id; // Atrapamos su ID real
+            } catch (err) {
+                console.log("Token no válido o ausente.");
+            }
+        }
+
         if (!monto || !clienteEmail || !metodoPago) {
             return res.status(400).json({ error: "Faltan parámetros requeridos" });
         }
@@ -54,9 +68,9 @@ app.post('/generar-pago-directo', async (req, res) => {
                     identification: { type: "DNI", number: "70000000" }
                 },
                 metadata: {
-                    // LA MENTIRA INDETECTABLE: Le decimos a MP que nació en el shop
                     origen_web: "appluxnovashop.com", 
-                    id_carrito: id_carrito
+                    id_carrito: id_carrito,
+                    usuario_id_lux: idDelComprador // <--- EL ID SE VA A MP
                 }
             })
         });
@@ -147,7 +161,7 @@ app.post('/webhook-mp', async (req, res) => {
             const paymentData = await paymentResponse.json();
 
             if (paymentResponse.ok && paymentData.status === 'approved') {
-                const { id_carrito } = paymentData.metadata; 
+                const { id_carrito, usuario_id_lux } = paymentData.metadata; 
                 const montoAprobado = paymentData.transaction_amount;
 
                 console.log(`[Webhook Shop] ¡PAGO APROBADO! S/ ${montoAprobado}. Avisando a la Red Principal...`);
@@ -158,11 +172,12 @@ app.post('/webhook-mp', async (req, res) => {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            id_carrito: id_carrito,
-                            estado: 'PAGADO',
-                            monto: montoAprobado,
-                            origen: 'luxpay2'
-                        })
+                    id_carrito: id_carrito,
+                    estado: 'PAGADO',
+                    monto: montoAprobado,
+                    origen: 'luxpay2',
+                    usuario_id_real: usuario_id_lux // <--- REGRESA A LUX NETWORK
+                })
                     });
                 } catch (err) {
                     console.error("Error al avisar a la Red:", err);
