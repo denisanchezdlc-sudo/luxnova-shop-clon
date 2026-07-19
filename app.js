@@ -81,6 +81,53 @@ app.post('/generar-pago-directo', async (req, res) => {
 });
 
 // ==========================================================================
+// CHECKOUT NORMAL (Para que la vitrina funcione si el auditor hace una compra)
+// ==========================================================================
+app.post('/procesar-pago', async (req, res) => {
+    try {
+        const { monto, clienteEmail, producto } = req.body;
+
+        const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${process.env.MP_ACCESS_TOKEN}`, 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                items: [{
+                    title: producto || "Producto Luxnova",
+                    quantity: 1,
+                    unit_price: parseFloat(monto),
+                    currency_id: "PEN"
+                }],
+                payer: { 
+                    email: clienteEmail 
+                },
+                back_urls: {
+                    success: "https://luxnova-shop-clon.onrender.com/pago-exitoso.html",
+                    failure: "https://luxnova-shop-clon.onrender.com/pago-fallido.html",
+                    pending: "https://luxnova-shop-clon.onrender.com/pago-exitoso.html"
+                },
+                auto_return: "approved"
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            // Le devolvemos al frontend exactamente el link que está esperando
+            res.json({ checkout_url: data.init_point });
+        } else {
+            console.error("Error al crear preferencia:", data);
+            res.status(400).json({ error: "Fallo al crear preferencia" });
+        }
+    } catch (error) {
+        console.error("Error interno del checkout:", error);
+        res.status(500).json({ error: "Error en el servidor clon" });
+    }
+});
+
+// ==========================================================================
 // EL PUENTE DE RETORNO (Recibe de MP -> Avisa a tu Red)
 // ==========================================================================
 
