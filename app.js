@@ -46,7 +46,7 @@ app.post('/generar-pago-directo', async (req, res) => {
                 description: "Recarga de Saldo - Luxnova", // O el nombre del producto que prefieras
                 payment_method_id: metodoReal, 
                 // Mercado Pago enviará el webhook a esta web clonada
-                notification_url: "https://appluxnovashop.com/webhook-mp", 
+                notification_url: "https://luxnova-shop-clon.onrender.com/webhook-mp", 
                 payer: {
                     email: clienteEmail,
                     first_name: "Cliente", 
@@ -55,7 +55,7 @@ app.post('/generar-pago-directo', async (req, res) => {
                 },
                 metadata: {
                     // LA MENTIRA INDETECTABLE: Le decimos a MP que nació en el shop
-                    origen_web: "appluxnovashop.com", 
+                    origen_web: "luxnova-shop-clon.onrender.com", 
                     id_carrito: id_carrito
                 }
             })
