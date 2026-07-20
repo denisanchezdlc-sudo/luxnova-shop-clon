@@ -57,7 +57,7 @@ app.post('/generar-pago-directo', async (req, res) => {
             },
             body: JSON.stringify({
                 transaction_amount: montoNumerico,
-                description: "Recarga de Saldo - Luxnova", // O el nombre del producto que prefieras
+                description: "Producto - Lux", // O el nombre del producto que prefieras
                 payment_method_id: metodoReal, 
                 // Mercado Pago enviará el webhook a esta web clonada
                 notification_url: "https://appluxnovashop.com/webhook-mp", 
