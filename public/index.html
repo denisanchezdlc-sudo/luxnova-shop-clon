@@ -429,6 +429,29 @@
         }
         .btn-quote:hover { background: var(--accent-hover); transform: translateY(-3px);}
         .btn-quote svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* ==========================================================================
+           12. TESTIMONIOS / SOCIAL PROOF
+           ========================================================================== */
+        .testimonials { padding: 80px 5%; background-color: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin-top: 60px; }
+        .testimonials-header { text-align: center; margin-bottom: 50px; }
+        .testimonials-header h2 { font-size: 2.2rem; font-weight: 800; color: var(--primary); margin-bottom: 10px; letter-spacing: -0.5px; }
+        .testimonials-header p { color: var(--text-muted); font-size: 1.1rem; }
+        
+        .testim-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .testim-card { background: var(--bg-main); padding: 35px 30px; border-radius: var(--radius-lg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); transition: transform 0.3s; display: flex; flex-direction: column; }
+        .testim-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); border-color: #cbd5e1; }
+        
+        .stars { color: #fbbf24; margin-bottom: 20px; display: flex; gap: 4px; }
+        .stars svg { width: 22px; height: 22px; fill: currentColor; }
+        
+        .testim-text { font-size: 1.05rem; color: var(--text-dark); font-style: italic; margin-bottom: 25px; line-height: 1.6; flex-grow: 1; }
+        
+        .testim-author { display: flex; align-items: center; gap: 15px; border-top: 1px solid var(--border); padding-top: 20px; }
+        .author-avatar { width: 45px; height: 45px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.2rem; flex-shrink: 0; }
+        .author-info { display: flex; flex-direction: column; }
+        .author-info h4 { font-size: 1rem; color: var(--primary); font-weight: 700; margin: 0; line-height: 1.2; }
+        .author-info span { font-size: 0.8rem; color: var(--success); font-weight: 600; display: flex; align-items: center; gap: 4px; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -500,6 +523,85 @@
             </div>
         </div>
     </main>
+
+    <!-- ========================================== -->
+    <!-- SECCIÓN DE TESTIMONIOS (SOCIAL PROOF) -->
+    <!-- ========================================== -->
+    <section class="testimonials">
+        <div class="testimonials-header">
+            <h2>Lo que dicen nuestros clientes</h2>
+            <p>Profesionales y empresas en todo el Perú que ya confían en Luxnova Digital.</p>
+        </div>
+        <div class="testim-grid">
+            
+            <!-- Testimonio 1 -->
+            <div class="testim-card">
+                <div class="stars">
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                </div>
+                <p class="testim-text">"La atención es de primera. Compré unos periféricos para el equipo de desarrollo y llegaron a Arequipa al día siguiente. El empaque impecable y la factura llegó al correo de inmediato."</p>
+                <div class="testim-author">
+                    <div class="author-avatar">M</div>
+                    <div class="author-info">
+                        <h4>Mateo C.</h4>
+                        <span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                            Compra Verificada
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonio 2 -->
+            <div class="testim-card">
+                <div class="stars">
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                </div>
+                <p class="testim-text">"He equipado toda mi oficina con ellos. El proceso de cotización corporativa fue súper ágil y tener soporte técnico local da mucha tranquilidad. 100% recomendados para empresas."</p>
+                <div class="testim-author">
+                    <div class="author-avatar" style="background-color: #2563eb;">D</div>
+                    <div class="author-info">
+                        <h4>Daniela R.</h4>
+                        <span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                            Cliente Corporativo
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Testimonio 3 -->
+            <div class="testim-card">
+                <div class="stars">
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                </div>
+                <p class="testim-text">"Tenía mis dudas comprando por internet, pero el pago por Mercado Pago fue seguro y me mandaron fotos por WhatsApp antes de enviar mi paquete a Trujillo. Excelente servicio."</p>
+                <div class="testim-author">
+                    <div class="author-avatar" style="background-color: #0f172a;">J</div>
+                    <div class="author-info">
+                        <h4>Jorge L.</h4>
+                        <span>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                            Compra Verificada
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
 
     <!-- BOTÓN FLOTANTE DE WHATSAPP -->
     <!-- Reemplaza el número 51999999999 por tu número real (Código de país + número) -->
