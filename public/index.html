@@ -689,15 +689,15 @@
                     <a href="#" class="link-blue" style="margin-bottom: 20px;">Ver los medios de pago</a>
                     
                     <div class="coupon-section">
-                        <div class="coupon-box">
-                            <span class="coupon-badge">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="10" rx="2"/><path d="M7 8v10M17 8v10"/></svg> Cupón
-                            </span>
-                            <label><input type="checkbox" id="cuponCheck" onchange="verificarCupon(this)"> Aplicar S/ 25 OFF.</label>
-                        </div>
-                        <div class="coupon-min">Compra mínima S/ 51.</div>
-                        <a href="#" class="link-blue" onclick="mostrarCupones(event)">Ver cupones disponibles</a>
-                    </div>
+    <div class="coupon-box" style="align-items: stretch; margin-bottom: 12px; display: flex; gap: 10px;">
+        <span class="coupon-badge" style="display: flex; align-items: center; white-space: nowrap;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="10" rx="2"/><path d="M7 8v10M17 8v10"/></svg> Cupón
+        </span>
+        <input type="text" id="inputCodigoCupon" placeholder="Ingresa tu código" style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem; outline: none; text-transform: uppercase; width: 100%;">
+        <button onclick="validarCuponEnModal()" style="background: var(--primary); color: white; border: none; padding: 0 15px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.3s;">Aplicar</button>
+    </div>
+    <div class="coupon-min" id="mensajeCupon">Compra mínima S/ 51. Solicítalo por nuestro WhatsApp.</div>
+</div>
 
                     <div class="color-section">
                         <div class="color-title">Color: <strong id="modalColorName">Negro</strong></div>
@@ -1184,6 +1184,14 @@
             const prod = dbProductos.find(p => p.id === id);
             if (!prod) return;
             productoModalActual = prod;
+            // Reiniciar el estado del cupón cada vez que abre un producto nuevo
+cuponAplicado = false;
+descuentoActual = 0;
+if(document.getElementById('inputCodigoCupon')) {
+    document.getElementById('inputCodigoCupon').value = '';
+    document.getElementById('inputCodigoCupon').disabled = false;
+    document.getElementById('mensajeCupon').innerHTML = 'Compra mínima S/ 51.';
+}
 
             if(document.getElementById('modalCantidad')) { document.getElementById('modalCantidad').value = '1'; }
 
@@ -1295,18 +1303,45 @@
             productoModalActual = null;
         }
 
-        // FUNCIONES DE CUPONES
-        function verificarCupon(checkbox) {
-            if(checkbox.checked) {
-                alert("En este momento los cupones promocionales se encuentran agotados para este producto. Por favor, intenta de nuevo en la próxima campaña.");
-                checkbox.checked = false; // Lo desmarca automáticamente
-            }
-        }
+        // ==========================================
+// NUEVAS FUNCIONES DE CUPONES
+// ==========================================
+let cuponAplicado = false;
+let descuentoActual = 0;
 
-        function mostrarCupones(e) {
-            e.preventDefault(); // Evita que la página salte hacia arriba
-            alert("No tienes cupones disponibles en tu cuenta por el momento.");
+function validarCuponEnModal() {
+    const inputCupon = document.getElementById('inputCodigoCupon');
+    const codigo = inputCupon.value.trim().toUpperCase();
+    const mensaje = document.getElementById('mensajeCupon');
+    const precioActual = productoModalActual.precio;
+
+    // 1. Validar el monto mínimo
+    if (precioActual < 51) {
+        mensaje.innerHTML = '<span style="color: var(--danger); font-weight: 600;">Este producto no supera el mínimo de S/ 51.</span>';
+        return;
+    }
+
+    // 2. Validar el código exacto (Aquí configuras tu código secreto)
+    if (codigo === 'LUXNOVA25') {
+        if (!cuponAplicado) {
+            cuponAplicado = true;
+            descuentoActual = 25; // S/ 25 de descuento
+            const nuevoPrecio = precioActual - descuentoActual;
+            
+            // Actualiza el precio gigante en la pantalla del modal
+            document.getElementById('modalPriceVal').innerText = nuevoPrecio.toFixed(2);
+            
+            mensaje.innerHTML = '<span style="color: var(--success); font-weight: 600;">¡Cupón aplicado! Ahorras S/ 25 en este producto.</span>';
+            inputCupon.disabled = true; // Bloquea el campo para que no aplique 2 veces
+        } else {
+            mensaje.innerHTML = '<span style="color: var(--accent); font-weight: 600;">El cupón ya está aplicado.</span>';
         }
+    } else if (codigo === '') {
+        mensaje.innerHTML = '<span style="color: var(--danger); font-weight: 600;">Por favor, ingresa un código.</span>';
+    } else {
+        mensaje.innerHTML = '<span style="color: var(--danger); font-weight: 600;">Código inválido o expirado.</span>';
+    }
+}
 
         function efectoZoom(e) {
             const container = document.getElementById('zoomContainer');
@@ -1344,46 +1379,46 @@
         // NUEVA LÓGICA DE CARRITO CON CANTIDADES
         // ====================================================================
 
-        function agregarAlCarrito(idStr, cantidadSelect = 1) {
-            const prod = dbProductos.find(p => p.id === idStr);
-            if(prod) {
-                // Buscamos si el producto ya existe en el carrito
-                const itemExistente = carrito.find(item => item.id === idStr);
-                
-                if (itemExistente) {
-                    // Si ya existe, le sumamos la nueva cantidad
-                    itemExistente.cantidad += parseInt(cantidadSelect);
-                } else {
-                    // Si no existe, lo agregamos como nuevo con su cantidad
-                    carrito.push({ ...prod, idUnico: Date.now(), cantidad: parseInt(cantidadSelect) });
-                }
-                
-                // Actualizamos la bolita roja con la suma total de artículos
-                const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
-                document.getElementById('cart-count').innerText = totalItems;
-                mostrarToast("Agregaste a tu carrito");
-            }
+        function agregarAlCarrito(idStr, cantidadSelect = 1, precioPersonalizado = null) {
+    const prod = dbProductos.find(p => p.id === idStr);
+    if(prod) {
+        // Usa el precio con descuento si existe, de lo contrario usa el original
+        const precioFinal = precioPersonalizado !== null ? precioPersonalizado : prod.precio;
+        
+        const itemExistente = carrito.find(item => item.id === idStr && item.precio === precioFinal);
+        
+        if (itemExistente) {
+            itemExistente.cantidad += parseInt(cantidadSelect);
+        } else {
+            carrito.push({ ...prod, precio: precioFinal, idUnico: Date.now(), cantidad: parseInt(cantidadSelect) });
         }
+        
+        const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+        document.getElementById('cart-count').innerText = totalItems;
+        mostrarToast("Agregaste a tu carrito");
+    }
+}
 
-        function añadirDesdeModal() {
-            if(productoModalActual) {
-                // Leemos la cantidad que el cliente escogió en el menú desplegable
-                const cant = document.getElementById('modalCantidad').value;
-                agregarAlCarrito(productoModalActual.id, cant);
-                cerrarModal();
-                toggleCart(); 
-            }
-        }
+function añadirDesdeModal() {
+    if(productoModalActual) {
+        const cant = document.getElementById('modalCantidad').value;
+        // Lee el precio directo de la pantalla (que ya incluye el descuento si aplicó cupón)
+        const precioMostrado = parseFloat(document.getElementById('modalPriceVal').innerText);
+        agregarAlCarrito(productoModalActual.id, cant, precioMostrado);
+        cerrarModal();
+        toggleCart(); 
+    }
+}
 
-        function comprarAhora() {
-            if(productoModalActual) {
-                // Leemos la cantidad para compra directa
-                const cant = document.getElementById('modalCantidad').value;
-                agregarAlCarrito(productoModalActual.id, cant);
-                cerrarModal();
-                iniciarCheckout();
-            }
-        }
+function comprarAhora() {
+    if(productoModalActual) {
+        const cant = document.getElementById('modalCantidad').value;
+        const precioMostrado = parseFloat(document.getElementById('modalPriceVal').innerText);
+        agregarAlCarrito(productoModalActual.id, cant, precioMostrado);
+        cerrarModal();
+        iniciarCheckout();
+    }
+}
 
         function eliminarDelCarrito(idUnico) {
             carrito = carrito.filter(item => item.idUnico !== idUnico);
